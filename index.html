@@ -1,170 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>For Jhace</title>
-    <style>
-        body {
-            background-image: url('background.jpg'); 
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            height: 100vh;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden; 
-            -webkit-tap-highlight-color: transparent;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>For Jhace</title>
 
-        .container {
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            width: 80%;
-            max-width: 500px;
-            position: relative;
-            z-index: 10;
-        }
+<style>
+body {
+    background-image: url('background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
 
-        h1 { color: #d63384; margin-bottom: 20px; }
-        p { font-size: 18px; color: #333; }
+.container {
+    text-align: center;
+    background-color: rgba(255,255,255,0.92);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    width: 85%;
+    max-width: 500px;
+    position: relative;
+    z-index: 5;
+}
 
-        input {
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 10px;
-            border: 2px solid #ffb6c1;
-            outline: none;
-            width: 60%;
-            text-align: center;
-        }
+h1 { color: #d63384; margin-bottom: 20px; }
+p { font-size: 18px; color: #333; }
 
-        button {
-            padding: 12px 25px;
-            font-size: 18px;
-            color: white;
-            background-color: #ff4081;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            margin: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease;
-        }
+input {
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 2px solid #ffb6c1;
+    outline: none;
+    width: 60%;
+    text-align: center;
+}
 
-        #proposal-screen { display: none; }
+button {
+    padding: 12px 25px;
+    font-size: 18px;
+    color: white;
+    background-color: #ff4081;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    margin: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
 
-        #yes-btn {
-            position: relative;
-            z-index: 20;
-        }
+#proposal-screen { display: none; }
 
-        /* FIXED NO BUTTON STYLING */
-        #no-btn {
-            /* CHANGED: Starts relative so it is visible next to Yes */
-            position: relative; 
-            z-index: 100; /* Super high so it is never hidden */
-            
-            /* Critical for mobile touch */
-            touch-action: none; 
-            transition: none; 
-        }
+#yes-btn {
+    position: relative;
+    z-index: 10;
+    transform-origin: center;
+}
 
-        @media only screen and (max-width: 600px) {
-            h1 { font-size: 22px; }
-            button { padding: 15px 30px; font-size: 20px; }
-        }
-    </style>
+/* NO button ALWAYS on top */
+#no-btn {
+    position: relative;
+    z-index: 9999;
+    touch-action: none;
+}
+
+@media only screen and (max-width: 600px) {
+    h1 { font-size: 22px; }
+    button { padding: 15px 30px; font-size: 20px; }
+}
+</style>
 </head>
+
 <body>
 
-    <div id="login-screen" class="container">
-        <h1>🔒 Restricted Access</h1>
-        <p>Enter your name to verify identity:</p>
-        <input type="text" id="name-input" placeholder="First Name...">
-        <br><br>
-        <button onclick="checkName()">Enter</button>
-        <p id="error-msg" style="color:red; display:none; font-weight:bold;">Sorry, only Jhace allows in here.</p>
-    </div>
+<div id="login-screen" class="container">
+    <h1>🔒 Restricted Access</h1>
+    <p>Enter your name to verify identity:</p>
+    <input type="text" id="name-input" placeholder="First Name...">
+    <br><br>
+    <button onclick="checkName()">Enter</button>
+    <p id="error-msg" style="color:red; display:none; font-weight:bold;">
+        Sorry, only Jhace allows in here.
+    </p>
+</div>
 
-    <div id="proposal-screen" class="container">
-        <h1>Can I be your Valentine? 💖</h1>
-        <p>Please say yes...</p>
-        
-        <div style="min-height: 100px; display:flex; justify-content:center; align-items:center;"> 
-            <button id="yes-btn" onclick="sheSaidYes()">Yes</button>
-            <button id="no-btn">No</button>
-        </div>
-    </div>
+<div id="proposal-screen" class="container">
+    <h1>Can I be your Valentine? 💖</h1>
+    <p>Please say yes...</p>
 
-    <script>
-        // --- 1. LOGIN LOGIC ---
-        function checkName() {
-            const input = document.getElementById('name-input').value;
-            const errorMsg = document.getElementById('error-msg');
-            
-            if (input.trim().toLowerCase() === "jhace") {
-                document.getElementById('login-screen').style.display = "none";
-                document.getElementById('proposal-screen').style.display = "block";
-                initNoButton(); 
-            } else {
-                errorMsg.style.display = "block";
-                document.getElementById('name-input').style.border = "2px solid red";
-            }
-        }
-
-        // --- 2. BUTTON MOVEMENT LOGIC ---
-        let yesSize = 1;
-        const noBtn = document.getElementById('no-btn');
-        const yesBtn = document.getElementById('yes-btn');
-
-        function initNoButton() {
-            noBtn.addEventListener('mouseover', moveButton);
-            
-            noBtn.addEventListener('touchstart', function(e) {
-                e.preventDefault(); 
-                moveButton();
-            }, { passive: false });
-
-            noBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                moveButton();
-            });
-        }
-
-        function moveButton() {
-            // A. Make Yes Button Bigger
-            yesSize += 0.2;
-            yesBtn.style.transform = `scale(${yesSize})`;
-
-            // B. Calculate Random Position
-            const winWidth = window.innerWidth;
-            const winHeight = window.innerHeight;
-            const btnWidth = noBtn.offsetWidth;
-            const btnHeight = noBtn.offsetHeight;
-
-            const maxLeft = winWidth - btnWidth - 20;
-            const maxTop = winHeight - btnHeight - 20;
-
-            const randomX = Math.max(10, Math.floor(Math.random() * maxLeft));
-            const randomY = Math.max(10, Math.floor(Math.random() * maxTop));
-
-            // CRITICAL CHANGE: We switch to FIXED positioning now
-            noBtn.style.position = "fixed"; 
-            noBtn.style.left = randomX + "px";
-            noBtn.style.top = randomY + "px";
-        }
-
-        // --- 3. SUCCESS MESSAGE ---
-        function sheSaidYes() {
-            alert("YAY! I love you Jhace! 💖 See you on the 14th!");
-        }
-    </script>
-</body>
-</html>
+    <div style="min-height:120px; display:flex; justify-content:center; align-items:center;">
+        <button id="yes-btn" onclick="sheSaidYes()">Yes</button>
+        <bu

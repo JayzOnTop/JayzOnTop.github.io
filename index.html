@@ -5,131 +5,161 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For Jhace</title>
     <style>
-        /* CSS STYLING GOES HERE */
+        /* --- CSS STYLES --- */
         body {
-            /* 1. BACKGROUND PHOTO SETUP */
-            /* Replace 'background.jpg' with your actual file name */
-            background-image: url('Background.jpg'); 
+            /* IMPORTANT: Make sure your image is named 'background.jpg' */
+            background-image: url('background.jpg'); 
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            height: 100vh;
+            height: 100vh; /* Full screen height */
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: 'Arial', sans-serif;
-            overflow: hidden; /* Prevents scrollbars when button moves */
+            overflow: hidden; /* Stops scrollbars from appearing when button moves */
         }
 
         .container {
             text-align: center;
-            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white box so text is readable */
+            background-color: rgba(255, 255, 255, 0.9); /* White box with slight transparency */
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            width: 80%;
+            max-width: 500px;
         }
 
-        h1 { color: #ff4081; } /* Pink text */
-        
-        input {
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ff4081;
+        h1 {
+            color: #d63384; /* Deep pink color */
+            margin-bottom: 20px;
         }
 
-        button {
-            padding: 10px 20px;
+        p {
             font-size: 18px;
-            background-color: #ff4081;
+            color: #333;
+        }
+
+        /* Input Styling */
+        input {
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: 2px solid #ffb6c1; /* Light pink border */
+            outline: none;
+            width: 60%;
+            text-align: center;
+        }
+
+        /* General Button Styling */
+        button {
+            padding: 12px 25px;
+            font-size: 18px;
             color: white;
+            background-color: #ff4081;
             border: none;
-            border-radius: 5px;
+            border-radius: 50px;
             cursor: pointer;
             margin: 10px;
-            transition: all 0.3s ease;
+            transition: transform 0.2s ease, background-color 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        /* Hide the proposal screen initially */
+        button:hover {
+            background-color: #e91e63;
+        }
+
+        /* Hide the proposal screen by default */
         #proposal-screen {
-            display: none; 
+            display: none;
         }
 
-        /* Specific style for the No button to make it move */
+        /* The No button needs to be absolute so we can move it anywhere */
         #no-btn {
-            position: relative; 
+            position: absolute; 
+            transition: none; /* Instant movement, no sliding */
+        }
+
+        /* --- MOBILE OPTIMIZATION --- */
+        @media only screen and (max-width: 600px) {
+            h1 { font-size: 22px; }
+            button { padding: 15px 30px; font-size: 20px; } /* Bigger touch targets */
+            input { width: 80%; }
         }
     </style>
 </head>
 <body>
 
     <div id="login-screen" class="container">
-        <h1>Who are you?</h1>
-        <p>Please enter your first name:</p>
-        <input type="text" id="name-input" placeholder="Name...">
+        <h1>🔒 Restricted Access</h1>
+        <p>Enter your name to verify identity:</p>
+        <input type="text" id="name-input" placeholder="First Name...">
+        <br><br>
         <button onclick="checkName()">Enter</button>
-        <p id="error-msg" style="color:red; display:none;">Access Denied. Only for Jhace.</p>
+        <p id="error-msg" style="color:red; display:none; font-weight:bold;">Sorry, only Jhace allows in here.</p>
     </div>
 
     <div id="proposal-screen" class="container">
         <h1>Can I be your Valentine? 💖</h1>
-        <div class="buttons">
-            <button id="yes-btn" onclick="sheSaidYes()">Yes</button>
-            <button id="no-btn" onmouseover="moveButton()">No</button>
+        <p>Please say yes...</p>
+        
+        <div style="height: 150px; position: relative;"> <button id="yes-btn" onclick="sheSaidYes()">Yes</button>
+            <button id="no-btn" onmouseover="moveButton()" ontouchstart="moveButton()">No</button>
         </div>
     </div>
 
     <script>
-        // JAVASCRIPT LOGIC GOES HERE
-        
-        // --- PART 1: LOGIN LOGIC ---
+        /* --- JAVASCRIPT LOGIC --- */
+
+        // 1. LOGIN CHECKER
         function checkName() {
             const input = document.getElementById('name-input').value;
             const errorMsg = document.getElementById('error-msg');
             
-            // Convert input to lowercase to match 'jhace' or 'Jhace' or 'JHACE'
-            if (input.toLowerCase() === "jhace") {
-                // If correct, hide login and show proposal
+            // .trim() removes accidental spaces. .toLowerCase() makes it case-insensitive.
+            if (input.trim().toLowerCase() === "jhace") {
                 document.getElementById('login-screen').style.display = "none";
                 document.getElementById('proposal-screen').style.display = "block";
             } else {
-                // If wrong, show error
                 errorMsg.style.display = "block";
+                // Shake animation effect for wrong answer
+                document.getElementById('name-input').style.border = "2px solid red";
             }
         }
 
-        // --- PART 2: THE BUTTON LOGIC ---
-        let yesSize = 1; // Current size of the Yes button
+        // 2. BUTTON MOVEMENT LOGIC
+        let yesSize = 1; // Initial size multiplier
 
         function moveButton() {
             const noBtn = document.getElementById('no-btn');
             const yesBtn = document.getElementById('yes-btn');
 
-            // 1. Make the Yes button bigger
-            yesSize += 0.2; // Increase size by 20%
+            // A. Make Yes Button Bigger
+            yesSize += 0.2; // Grow by 20%
             yesBtn.style.transform = `scale(${yesSize})`;
 
-            // 2. Teleport the No button
-            // We get the window width and height to know where we can move
-            const maxWidth = window.innerWidth - 100; // subtract button size
-            const maxHeight = window.innerHeight - 100;
+            // B. Calculate Random Position for No Button
+            // We get screen width/height and subtract button size so it doesn't go off-screen
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+            
+            const maxWidth = window.innerWidth - btnWidth - 50; // -50 is safety buffer
+            const maxHeight = window.innerHeight - btnHeight - 50;
 
-            // Generate random coordinates
-            const randomX = Math.floor(Math.random() * maxWidth);
-            const randomY = Math.floor(Math.random() * maxHeight);
+            // Generate random X and Y numbers
+            const randomX = Math.max(20, Math.floor(Math.random() * maxWidth));
+            const randomY = Math.max(20, Math.floor(Math.random() * maxHeight));
 
-            // Apply the new coordinates
-            noBtn.style.position = "fixed"; // Allows it to move anywhere on screen
+            // Apply new position
             noBtn.style.left = randomX + "px";
             noBtn.style.top = randomY + "px";
         }
 
+        // 3. SUCCESS MESSAGE
         function sheSaidYes() {
-            // What happens when she clicks Yes?
-            alert("YAY! See you on the 14th! 💖");
-            // You can also redirect her to a song or another page:
-            // window.location.href = "https://www.youtube.com/watch?v=YOUR_SONG";
+            alert("YAY! I love you Jhace! 💖 See you on the 14th!");
+            // You can add more code here later if you want to play music
         }
     </script>
 </body>

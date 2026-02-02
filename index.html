@@ -1,103 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>For Jhace</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Jhace</title>
+    <style>
+        /* --- RESET & BASIC SETUP --- */
+        * {
+            box-sizing: border-box;
+            user-select: none; /* Prevents highlighting text on mobile */
+            -webkit-user-select: none;
+        }
 
-<style>
-body {
-    background-image: url('background.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 100vh;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial, sans-serif;
-    overflow: hidden;
-    -webkit-tap-highlight-color: transparent;
-}
+        body {
+            /* Make sure this file matches your image name exactly */
+            background-image: url('background.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            overflow: hidden; /* Stops scrollbars */
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-.container {
-    text-align: center;
-    background-color: rgba(255,255,255,0.92);
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    width: 85%;
-    max-width: 500px;
-    position: relative;
-    z-index: 5;
-}
+        /* --- THE WHITE BOX --- */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            z-index: 100;
+        }
 
-h1 { color: #d63384; margin-bottom: 20px; }
-p { font-size: 18px; color: #333; }
+        h1 {
+            color: #d63384;
+            font-size: 24px;
+            margin-top: 0;
+        }
 
-input {
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 10px;
-    border: 2px solid #ffb6c1;
-    outline: none;
-    width: 60%;
-    text-align: center;
-}
+        /* --- INPUT & BUTTONS --- */
+        input {
+            padding: 10px;
+            border: 2px solid #ffb6c1;
+            border-radius: 8px;
+            width: 80%;
+            margin-bottom: 10px;
+            font-size: 16px;
+            text-align: center;
+        }
 
-button {
-    padding: 12px 25px;
-    font-size: 18px;
-    color: white;
-    background-color: #ff4081;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    margin: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
-}
+        .btn {
+            padding: 12px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.2s; /* Smooth grow for Yes button */
+        }
 
-#proposal-screen { display: none; }
+        .btn-pink { background-color: #ff4081; }
 
-#yes-btn {
-    position: relative;
-    z-index: 10;
-    transform-origin: center;
-}
+        /* --- YES / NO SPECIFICS --- */
+        #yes-btn {
+            position: relative;
+            z-index: 10; /* Lower than No button */
+        }
 
-/* NO button ALWAYS on top */
-#no-btn {
-    position: relative;
-    z-index: 9999;
-    touch-action: none;
-}
+        #no-btn {
+            position: relative; /* Starts relative, becomes fixed later */
+            z-index: 9999; /* Always on top */
+            background-color: #ff4081;
+            
+            /* CRITICAL FIXES FOR MOBILE */
+            touch-action: none; /* Tells phone: "Do not scroll when touching this" */
+            -webkit-tap-highlight-color: transparent; /* Removes blue box on tap */
+        }
 
-@media only screen and (max-width: 600px) {
-    h1 { font-size: 22px; }
-    button { padding: 15px 30px; font-size: 20px; }
-}
-</style>
+        /* Hiding screens logic */
+        .hidden { display: none !important; }
+
+    </style>
 </head>
-
 <body>
 
-<div id="login-screen" class="container">
-    <h1>🔒 Restricted Access</h1>
-    <p>Enter your name to verify identity:</p>
-    <input type="text" id="name-input" placeholder="First Name...">
-    <br><br>
-    <button onclick="checkName()">Enter</button>
-    <p id="error-msg" style="color:red; display:none; font-weight:bold;">
-        Sorry, only Jhace allows in here.
-    </p>
-</div>
+    <div id="login-screen" class="card">
+        <h1>🔒 Security Check</h1>
+        <p>Who is the prettiest girl?</p>
+        <input type="text" id="name-input" placeholder="Enter Name">
+        <br>
+        <button class="btn btn-pink" onclick="checkLogin()">Enter</button>
+        <p id="error-msg" style="color:red; display:none; font-size: 14px;">Access Denied. Only Jhace allowed.</p>
+    </div>
 
-<div id="proposal-screen" class="container">
-    <h1>Can I be your Valentine? 💖</h1>
-    <p>Please say yes...</p>
+    <div id="proposal-screen" class="card hidden">
+        <h1>Can I be your Valentine? 💖</h1>
+        <p>Please say yes...</p>
+        
+        <div style="min-height: 150px;">
+            <button id="yes-btn" class="btn btn-pink" onclick="acceptProposal()">Yes</button>
+            <button id="no-btn" class="btn btn-pink">No</button>
+        </div>
+    </div>
 
-    <div style="min-height:120px; display:flex; justify-content:center; align-items:center;">
-        <button id="yes-btn" onclick="sheSaidYes()">Yes</button>
-        <bu
+    <script>
+        // --- LOGIC ---
+
+        const loginScreen = document.getElementById('login-screen');
+        const proposalScreen = document.getElementById('proposal-screen');
+        const noBtn = document.getElementById('no-btn');
+        const yesBtn = document.getElementById('yes-btn');
+        let yesScale = 1;
+
+        // 1. LOGIN SYSTEM
+        function checkLogin() {
+            const input = document.getElementById('name-input').value.trim().toLowerCase();
+            if(input === 'jhace') {
+                loginScreen.classList.add('hidden');
+                proposalScreen.classList.remove('hidden');
+                initNoButton(); // Start the No button logic only after login
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+
+        // 2. THE BUG-FREE BUTTON MOVER
+        function initNoButton() {
+            // Mouse (Desktop)
+            noBtn.addEventListener('mouseover', teleportButton);
+            
+            // Touch (Mobile) - The "Stuck" Fix
+            noBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault(); // STOP the click from happening. Just run code.
+                teleportButton();
+            }, { passive: false });
+        }
+
+        function teleportButton() {
+            // A. GROW YES BUTTON
+            yesScale += 0.2;
+            yesBtn.style.transform = `scale(${yesScale})`;
+
+            // B. MOVE NO BUTTON
+            // 1. Get the screen dimensions
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            
+            // 2. Get button dimensions
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+
+            // 3. Calculate Safe Zone (The Clamp)
+            // We subtract button size + 20px padding so it never touches the edge
+            const maxLeft = screenWidth - btnWidth - 20;
+            const maxTop = screenHeight - btnHeight - 20;
+
+            // 4. Generate Random Coordinates
+            // Math.max(10, ...) ensures it never goes off the TOP or LEFT edge
+            const newLeft = Math.max(10, Math.random() * maxLeft);
+            const newTop = Math.max(10, Math.random() * maxTop);
+
+            // 5. Apply - SWITCH TO FIXED POSITIONING
+            noBtn.style.position = 'fixed'; // Breaks it out of the card
+            noBtn.style.left = newLeft + 'px';
+            noBtn.style.top = newTop + 'px';
+        }
+
+        // 3. SUCCESS
+        function acceptProposal() {
+            alert("YAY! See you on the 14th! 💖");
+        }
+
+    </script>
+</body>
+</html>

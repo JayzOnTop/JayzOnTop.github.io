@@ -1,9 +1,136 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>My Website</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Jhace</title>
+    <style>
+        /* CSS STYLING GOES HERE */
+        body {
+            /* 1. BACKGROUND PHOTO SETUP */
+            /* Replace 'background.jpg' with your actual file name */
+            background-image: url('background.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden; /* Prevents scrollbars when button moves */
+        }
+
+        .container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white box so text is readable */
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        h1 { color: #ff4081; } /* Pink text */
+        
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ff4081;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #ff4081;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        /* Hide the proposal screen initially */
+        #proposal-screen {
+            display: none; 
+        }
+
+        /* Specific style for the No button to make it move */
+        #no-btn {
+            position: relative; 
+        }
+    </style>
 </head>
 <body>
-  <h1>Welcome to my website!</h1>
+
+    <div id="login-screen" class="container">
+        <h1>Who are you?</h1>
+        <p>Please enter your first name:</p>
+        <input type="text" id="name-input" placeholder="Name...">
+        <button onclick="checkName()">Enter</button>
+        <p id="error-msg" style="color:red; display:none;">Access Denied. Only for Jhace.</p>
+    </div>
+
+    <div id="proposal-screen" class="container">
+        <h1>Can I be your Valentine? 💖</h1>
+        <div class="buttons">
+            <button id="yes-btn" onclick="sheSaidYes()">Yes</button>
+            <button id="no-btn" onmouseover="moveButton()">No</button>
+        </div>
+    </div>
+
+    <script>
+        // JAVASCRIPT LOGIC GOES HERE
+        
+        // --- PART 1: LOGIN LOGIC ---
+        function checkName() {
+            const input = document.getElementById('name-input').value;
+            const errorMsg = document.getElementById('error-msg');
+            
+            // Convert input to lowercase to match 'jhace' or 'Jhace' or 'JHACE'
+            if (input.toLowerCase() === "jhace") {
+                // If correct, hide login and show proposal
+                document.getElementById('login-screen').style.display = "none";
+                document.getElementById('proposal-screen').style.display = "block";
+            } else {
+                // If wrong, show error
+                errorMsg.style.display = "block";
+            }
+        }
+
+        // --- PART 2: THE BUTTON LOGIC ---
+        let yesSize = 1; // Current size of the Yes button
+
+        function moveButton() {
+            const noBtn = document.getElementById('no-btn');
+            const yesBtn = document.getElementById('yes-btn');
+
+            // 1. Make the Yes button bigger
+            yesSize += 0.2; // Increase size by 20%
+            yesBtn.style.transform = `scale(${yesSize})`;
+
+            // 2. Teleport the No button
+            // We get the window width and height to know where we can move
+            const maxWidth = window.innerWidth - 100; // subtract button size
+            const maxHeight = window.innerHeight - 100;
+
+            // Generate random coordinates
+            const randomX = Math.floor(Math.random() * maxWidth);
+            const randomY = Math.floor(Math.random() * maxHeight);
+
+            // Apply the new coordinates
+            noBtn.style.position = "fixed"; // Allows it to move anywhere on screen
+            noBtn.style.left = randomX + "px";
+            noBtn.style.top = randomY + "px";
+        }
+
+        function sheSaidYes() {
+            // What happens when she clicks Yes?
+            alert("YAY! See you on the 14th! 💖");
+            // You can also redirect her to a song or another page:
+            // window.location.href = "https://www.youtube.com/watch?v=YOUR_SONG";
+        }
+    </script>
 </body>
-</html>   
+</html>

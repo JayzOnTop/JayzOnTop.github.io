@@ -17,7 +17,6 @@
             align-items: center;
             font-family: 'Arial', sans-serif;
             overflow: hidden; 
-            /* Disable mobile highlight color */
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -56,7 +55,7 @@
             cursor: pointer;
             margin: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease; /* Only animate size, not position */
+            transition: transform 0.2s ease;
         }
 
         #proposal-screen { display: none; }
@@ -68,11 +67,12 @@
 
         /* FIXED NO BUTTON STYLING */
         #no-btn {
-            position: absolute; 
-            z-index: 15;
-            /* CRITICAL: Disables browser zooming/scrolling on this button */
+            /* CHANGED: Starts relative so it is visible next to Yes */
+            position: relative; 
+            z-index: 100; /* Super high so it is never hidden */
+            
+            /* Critical for mobile touch */
             touch-action: none; 
-            /* CRITICAL: No transition allows instant hitbox update */
             transition: none; 
         }
 
@@ -97,7 +97,7 @@
         <h1>Can I be your Valentine? 💖</h1>
         <p>Please say yes...</p>
         
-        <div style="min-height: 200px; display:flex; justify-content:center; align-items:center;"> 
+        <div style="min-height: 100px; display:flex; justify-content:center; align-items:center;"> 
             <button id="yes-btn" onclick="sheSaidYes()">Yes</button>
             <button id="no-btn">No</button>
         </div>
@@ -112,7 +112,7 @@
             if (input.trim().toLowerCase() === "jhace") {
                 document.getElementById('login-screen').style.display = "none";
                 document.getElementById('proposal-screen').style.display = "block";
-                initNoButton(); // Start the button logic
+                initNoButton(); 
             } else {
                 errorMsg.style.display = "block";
                 document.getElementById('name-input').style.border = "2px solid red";
@@ -125,17 +125,13 @@
         const yesBtn = document.getElementById('yes-btn');
 
         function initNoButton() {
-            // We listen to every possible way a human can touch a screen
-            // 1. Mouse over (Desktop)
             noBtn.addEventListener('mouseover', moveButton);
             
-            // 2. Touch Start (Mobile - instant trigger)
             noBtn.addEventListener('touchstart', function(e) {
-                e.preventDefault(); // Stop the phone from waiting for a "click"
+                e.preventDefault(); 
                 moveButton();
             }, { passive: false });
 
-            // 3. Click (Fallback - if she manages to tap it incredibly fast)
             noBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 moveButton();
@@ -153,15 +149,13 @@
             const btnWidth = noBtn.offsetWidth;
             const btnHeight = noBtn.offsetHeight;
 
-            // Calculate max positions with a safety margin
             const maxLeft = winWidth - btnWidth - 20;
             const maxTop = winHeight - btnHeight - 20;
 
-            // Generate Random X/Y
             const randomX = Math.max(10, Math.floor(Math.random() * maxLeft));
             const randomY = Math.max(10, Math.floor(Math.random() * maxTop));
 
-            // Apply new position using FIXED so it breaks out of the container
+            // CRITICAL CHANGE: We switch to FIXED positioning now
             noBtn.style.position = "fixed"; 
             noBtn.style.left = randomX + "px";
             noBtn.style.top = randomY + "px";
@@ -169,7 +163,6 @@
 
         // --- 3. SUCCESS MESSAGE ---
         function sheSaidYes() {
-            // You can change this message to whatever you want!
             alert("YAY! I love you Jhace! 💖 See you on the 14th!");
         }
     </script>

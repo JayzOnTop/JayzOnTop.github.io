@@ -103,12 +103,19 @@
         }
     }
 
-     // --- PART 2: THE BUTTON LOGIC ---
     let yesSize = 1;
-    let isMoving = false; // Flag to prevent rapid multiple moves
+    let isMoving = false;
 
-    function moveButton() {
-        if (isMoving) return; // Prevent re-entrance
+    // 1. Pass the 'event' object (e) into the function
+    function moveButton(e) { 
+        if (isMoving) return;
+        
+        // 2. THE FIX: If this is a touch event, stop the browser's default behavior
+        // This prevents the "sticky" click emulation and scrolling
+        if (e && e.type === 'touchstart') {
+            e.preventDefault();
+        }
+
         isMoving = true;
 
         const noBtn = document.getElementById('no-btn');
@@ -118,36 +125,35 @@
         yesSize += 0.2;
         yesBtn.style.transform = `scale(${yesSize})`;
 
-        // Get viewport width and height
+        // Get viewport dimensions
         const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
         const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 
-        // Get button size
         const btnWidth = noBtn.offsetWidth;
         const btnHeight = noBtn.offsetHeight;
 
-        // Calculate maximum position considering button size
         const maxX = vw - btnWidth;
         const maxY = vh - btnHeight;
 
-        // Generate random coordinates within the viewport
         const randomX = Math.floor(Math.random() * maxX);
         const randomY = Math.floor(Math.random() * maxY);
 
-        // Move the button
         noBtn.style.position = "fixed";
         noBtn.style.left = randomX + "px";
         noBtn.style.top = randomY + "px";
 
-        // Reset the flag after a short delay
         setTimeout(() => {
             isMoving = false;
-        }, 300); // Delay to prevent rapid re-triggering
+        }, 300);
     }
 
-    // Add event listeners for hover and touch
-    document.getElementById('no-btn').addEventListener('mouseover', moveButton);
-    document.getElementById('no-btn').addEventListener('touchstart', moveButton);
+    // Add event listeners
+    const noBtn = document.getElementById('no-btn');
+    noBtn.addEventListener('mouseover', moveButton);
+    
+    // 3. Add { passive: false } to allow preventDefault() to work
+    // Modern browsers require this explicit option for touch events to allow blocking
+    noBtn.addEventListener('touchstart', moveButton, { passive: false });
 </script>
 </body>
 </html>

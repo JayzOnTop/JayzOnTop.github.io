@@ -5,54 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For Jhace</title>
     <style>
-        /* --- CSS STYLES --- */
         body {
-            /* IMPORTANT: Make sure your image is named 'background.jpg' */
             background-image: url('background.jpg'); 
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            height: 100vh; /* Full screen height */
+            height: 100vh;
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: 'Arial', sans-serif;
-            overflow: hidden; /* Stops scrollbars from appearing when button moves */
+            overflow: hidden; 
+            /* Fix for mobile selection highlighting */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
             text-align: center;
-            background-color: rgba(255, 255, 255, 0.9); /* White box with slight transparency */
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             width: 80%;
             max-width: 500px;
+            position: relative; /* Important for positioning elements inside */
+            z-index: 10; /* Ensures container is above background */
         }
 
-        h1 {
-            color: #d63384; /* Deep pink color */
-            margin-bottom: 20px;
-        }
+        h1 { color: #d63384; margin-bottom: 20px; }
+        p { font-size: 18px; color: #333; }
 
-        p {
-            font-size: 18px;
-            color: #333;
-        }
-
-        /* Input Styling */
         input {
             padding: 12px;
             font-size: 16px;
             border-radius: 10px;
-            border: 2px solid #ffb6c1; /* Light pink border */
+            border: 2px solid #ffb6c1;
             outline: none;
             width: 60%;
             text-align: center;
         }
 
-        /* General Button Styling */
         button {
             padding: 12px 25px;
             font-size: 18px;
@@ -62,30 +55,28 @@
             border-radius: 50px;
             cursor: pointer;
             margin: 10px;
-            transition: transform 0.2s ease, background-color 0.2s;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
         }
 
-        button:hover {
-            background-color: #e91e63;
+        #proposal-screen { display: none; }
+
+        /* YES button stays in place */
+        #yes-btn {
+            position: relative;
+            z-index: 20; /* Ensures Yes is always clickable */
         }
 
-        /* Hide the proposal screen by default */
-        #proposal-screen {
-            display: none;
-        }
-
-        /* The No button needs to be absolute so we can move it anywhere */
+        /* NO button is absolute so it can fly around */
         #no-btn {
             position: absolute; 
-            transition: none; /* Instant movement, no sliding */
+            z-index: 15;
+            transition: left 0.1s ease, top 0.1s ease; /* Smooth movement */
         }
 
-        /* --- MOBILE OPTIMIZATION --- */
         @media only screen and (max-width: 600px) {
             h1 { font-size: 22px; }
-            button { padding: 15px 30px; font-size: 20px; } /* Bigger touch targets */
-            input { width: 80%; }
+            button { padding: 15px 30px; font-size: 20px; }
         }
     </style>
 </head>
@@ -104,62 +95,80 @@
         <h1>Can I be your Valentine? 💖</h1>
         <p>Please say yes...</p>
         
-        <div style="height: 150px; position: relative;"> <button id="yes-btn" onclick="sheSaidYes()">Yes</button>
-            <button id="no-btn" onmouseover="moveButton()" ontouchstart="moveButton()">No</button>
-        </div>
+        <div style="min-height: 200px; display:flex; justify-content:center; align-items:center;"> 
+            <button id="yes-btn" onclick="sheSaidYes()">Yes</button>
+            <button id="no-btn">No</button> </div>
     </div>
 
     <script>
-        /* --- JAVASCRIPT LOGIC --- */
-
-        // 1. LOGIN CHECKER
+        // --- 1. LOGIN LOGIC ---
         function checkName() {
             const input = document.getElementById('name-input').value;
             const errorMsg = document.getElementById('error-msg');
             
-            // .trim() removes accidental spaces. .toLowerCase() makes it case-insensitive.
             if (input.trim().toLowerCase() === "jhace") {
                 document.getElementById('login-screen').style.display = "none";
                 document.getElementById('proposal-screen').style.display = "block";
+                
+                // Initialize the No button position next to Yes button initially
+                initNoButton();
             } else {
                 errorMsg.style.display = "block";
-                // Shake animation effect for wrong answer
                 document.getElementById('name-input').style.border = "2px solid red";
             }
         }
 
-        // 2. BUTTON MOVEMENT LOGIC
-        let yesSize = 1; // Initial size multiplier
+        // --- 2. BUTTON MOVEMENT LOGIC ---
+        let yesSize = 1;
+        const noBtn = document.getElementById('no-btn');
+        const yesBtn = document.getElementById('yes-btn');
+
+        // This function sets up the event listeners properly
+        function initNoButton() {
+            // EVENTS FOR COMPUTER (Mouse)
+            noBtn.addEventListener('mouseover', moveButton);
+            
+            // EVENTS FOR MOBILE (Touch)
+            // We use { passive: false } to allow preventing default behavior
+            noBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault(); // STOP THE BUG: prevents double-firing or freezing
+                moveButton();
+            }, { passive: false });
+        }
 
         function moveButton() {
-            const noBtn = document.getElementById('no-btn');
-            const yesBtn = document.getElementById('yes-btn');
-
             // A. Make Yes Button Bigger
-            yesSize += 0.2; // Grow by 20%
+            yesSize += 0.2;
             yesBtn.style.transform = `scale(${yesSize})`;
 
-            // B. Calculate Random Position for No Button
-            // We get screen width/height and subtract button size so it doesn't go off-screen
+            // B. Calculate Random Position
+            // Get the browser window size
+            const winWidth = window.innerWidth;
+            const winHeight = window.innerHeight;
+            
+            // Get button size
             const btnWidth = noBtn.offsetWidth;
             const btnHeight = noBtn.offsetHeight;
-            
-            const maxWidth = window.innerWidth - btnWidth - 50; // -50 is safety buffer
-            const maxHeight = window.innerHeight - btnHeight - 50;
 
-            // Generate random X and Y numbers
-            const randomX = Math.max(20, Math.floor(Math.random() * maxWidth));
-            const randomY = Math.max(20, Math.floor(Math.random() * maxHeight));
+            // Calculate safe boundaries (stay inside screen)
+            // We subtract button size and a 20px padding
+            const maxLeft = winWidth - btnWidth - 20;
+            const maxTop = winHeight - btnHeight - 20;
+
+            // Generate random numbers
+            const randomX = Math.floor(Math.random() * maxLeft);
+            const randomY = Math.floor(Math.random() * maxTop);
 
             // Apply new position
+            // We use 'fixed' so it positions relative to the SCREEN, not the container
+            noBtn.style.position = "fixed"; 
             noBtn.style.left = randomX + "px";
             noBtn.style.top = randomY + "px";
         }
 
-        // 3. SUCCESS MESSAGE
+        // --- 3. SUCCESS MESSAGE ---
         function sheSaidYes() {
             alert("YAY! I love you Jhace! 💖 See you on the 14th!");
-            // You can add more code here later if you want to play music
         }
     </script>
 </body>

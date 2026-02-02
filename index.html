@@ -1,84 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For Jhace</title>
-    <style>
-        body {
-            background-image: url('background.jpg'); 
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            height: 100vh;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden; 
-            /* Fix for mobile selection highlighting */
-            -webkit-tap-highlight-color: transparent;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>For Jhace</title>
+<style>
+    body {
+        background-image: url('background.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Arial', sans-serif;
+        overflow: hidden;
+        -webkit-tap-highlight-color: transparent;
+    }
 
-        .container {
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            width: 80%;
-            max-width: 500px;
-            position: relative; /* Important for positioning elements inside */
-            z-index: 10; /* Ensures container is above background */
-        }
+    .container {
+        text-align: center;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        width: 80%;
+        max-width: 500px;
+        position: relative;
+        z-index: 10;
+    }
 
-        h1 { color: #d63384; margin-bottom: 20px; }
-        p { font-size: 18px; color: #333; }
+    h1 { color: #d63384; margin-bottom: 20px; }
+    p { font-size: 18px; color: #333; }
 
-        input {
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 10px;
-            border: 2px solid #ffb6c1;
-            outline: none;
-            width: 60%;
-            text-align: center;
-        }
+    input {
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 10px;
+        border: 2px solid #ffb6c1;
+        outline: none;
+        width: 60%;
+        text-align: center;
+    }
 
-        button {
-            padding: 12px 25px;
-            font-size: 18px;
-            color: white;
-            background-color: #ff4081;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            margin: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease;
-        }
+    button {
+        padding: 12px 25px;
+        font-size: 18px;
+        color: white;
+        background-color: #ff4081;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        margin: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease;
+    }
 
-        #proposal-screen { display: none; }
+    #proposal-screen { display: none; }
 
-        /* YES button stays in place */
-        #yes-btn {
-            position: relative;
-            z-index: 20; /* Ensures Yes is always clickable */
-        }
+    /* YES button stays in place */
+    #yes-btn {
+        position: relative;
+        z-index: 15; /* lower than No so No remains clickable even when Yes scales */
+        transform-origin: center center;
+    }
 
-        /* NO button is absolute so it can fly around */
-        #no-btn {
-            position: absolute; 
-            z-index: 15;
-            transition: left 0.1s ease, top 0.1s ease; /* Smooth movement */
-        }
+    /* NO button is absolute/fixed so it can fly around */
+    #no-btn {
+        position: absolute;
+        z-index: 30; /* keep No above Yes so it's always reachable */
+        transition: left 0.1s ease, top 0.1s ease;
+        touch-action: none; /* helps prevent default touch gestures interfering */
+    }
 
-        @media only screen and (max-width: 600px) {
-            h1 { font-size: 22px; }
-            button { padding: 15px 30px; font-size: 20px; }
-        }
-    </style>
+    @media only screen and (max-width: 600px) {
+        h1 { font-size: 22px; }
+        button { padding: 15px 30px; font-size: 20px; }
+    }
+</style>
 </head>
 <body>
 
@@ -94,82 +95,115 @@
     <div id="proposal-screen" class="container">
         <h1>Can I be your Valentine? 💖</h1>
         <p>Please say yes...</p>
-        
-        <div style="min-height: 200px; display:flex; justify-content:center; align-items:center;"> 
+
+        <div style="min-height: 200px; display:flex; justify-content:center; align-items:center; position:relative;">
             <button id="yes-btn" onclick="sheSaidYes()">Yes</button>
-            <button id="no-btn">No</button> </div>
+            <button id="no-btn" aria-label="No">No</button>
+        </div>
     </div>
 
-    <script>
-        // --- 1. LOGIN LOGIC ---
-        function checkName() {
-            const input = document.getElementById('name-input').value;
-            const errorMsg = document.getElementById('error-msg');
-            
-            if (input.trim().toLowerCase() === "jhace") {
-                document.getElementById('login-screen').style.display = "none";
-                document.getElementById('proposal-screen').style.display = "block";
-                
-                // Initialize the No button position next to Yes button initially
-                initNoButton();
-            } else {
-                errorMsg.style.display = "block";
-                document.getElementById('name-input').style.border = "2px solid red";
-            }
+<script>
+    // --- 1. LOGIN LOGIC ---
+    function checkName() {
+        const input = document.getElementById('name-input').value;
+        const errorMsg = document.getElementById('error-msg');
+
+        if (input.trim().toLowerCase() === "jhace") {
+            document.getElementById('login-screen').style.display = "none";
+            document.getElementById('proposal-screen').style.display = "block";
+            // Initialize the No button position next to Yes button initially
+            initNoButton();
+        } else {
+            errorMsg.style.display = "block";
+            document.getElementById('name-input').style.border = "2px solid red";
         }
+    }
 
-        // --- 2. BUTTON MOVEMENT LOGIC ---
-        let yesSize = 1;
-        const noBtn = document.getElementById('no-btn');
-        const yesBtn = document.getElementById('yes-btn');
+    // --- 2. BUTTON MOVEMENT LOGIC ---
+    let yesSize = 1;
+    const noBtn = document.getElementById('no-btn');
+    const yesBtn = document.getElementById('yes-btn');
 
-        // This function sets up the event listeners properly
-        function initNoButton() {
-            // EVENTS FOR COMPUTER (Mouse)
-            noBtn.addEventListener('mouseover', moveButton);
-            
-            // EVENTS FOR MOBILE (Touch)
-            // We use { passive: false } to allow preventing default behavior
-            noBtn.addEventListener('touchstart', function(e) {
-                e.preventDefault(); // STOP THE BUG: prevents double-firing or freezing
-                moveButton();
-            }, { passive: false });
+    function initNoButton() {
+        // Use pointer events (handles mouse + touch) to avoid double-firing
+        noBtn.addEventListener('pointerenter', moveButton);
+        noBtn.addEventListener('pointerdown', function(e){
+            // pointerdown on touch will trigger move as well
+            // do NOT preventDefault here (avoids blocking subsequent pointer events)
+            moveButton();
+        });
+        // Place No initially near Yes
+        placeNoNextToYes();
+    }
+
+    function placeNoNextToYes() {
+        const yesRect = yesBtn.getBoundingClientRect();
+        // position no to the right of yes (if possible)
+        const left = Math.min(window.innerWidth - 80, yesRect.right + 10);
+        const top = Math.max(20, yesRect.top);
+        noBtn.style.position = "fixed";
+        noBtn.style.left = left + "px";
+        noBtn.style.top = top + "px";
+    }
+
+    function moveButton() {
+        // A. Make Yes Button Bigger
+        yesSize += 0.2;
+        yesBtn.style.transform = `scale(${yesSize})`;
+
+        // B. Calculate Random Position (avoid putting No under Yes)
+        const winWidth = window.innerWidth;
+        const winHeight = window.innerHeight;
+
+        const btnWidth = noBtn.offsetWidth;
+        const btnHeight = noBtn.offsetHeight;
+
+        const maxLeft = Math.max(10, winWidth - btnWidth - 20);
+        const maxTop = Math.max(10, winHeight - btnHeight - 20);
+
+        // Try a few times to find a position that does NOT overlap the Yes button
+        const yesRect = yesBtn.getBoundingClientRect();
+        let attempts = 0;
+        let randomX, randomY, candidateRect, overlap;
+        do {
+            randomX = Math.floor(10 + Math.random() * (maxLeft - 10));
+            randomY = Math.floor(10 + Math.random() * (maxTop - 10));
+            candidateRect = {
+                left: randomX,
+                top: randomY,
+                right: randomX + btnWidth,
+                bottom: randomY + btnHeight
+            };
+            overlap = rectsOverlap(candidateRect, yesRect);
+            attempts++;
+            // if attempts exceed a threshold, just accept it (avoid infinite loop)
+            if (attempts > 8) break;
+        } while (overlap);
+
+        noBtn.style.position = "fixed";
+        noBtn.style.left = randomX + "px";
+        noBtn.style.top = randomY + "px";
+    }
+
+    function rectsOverlap(a, b) {
+        return !(a.left > b.right || a.right < b.left || a.top > b.bottom || a.bottom < b.top);
+    }
+
+    // --- 3. SUCCESS MESSAGE ---
+    function sheSaidYes() {
+        alert("YAY! I love you Jhace! 💖 See you on the 14th!");
+    }
+
+    // Optional: reposition No on orientation/resize to remain on screen
+    window.addEventListener('resize', () => {
+        // ensure current no position is inside the viewport
+        const btn = noBtn.getBoundingClientRect();
+        const rightOverflow = btn.right - window.innerWidth;
+        const bottomOverflow = btn.bottom - window.innerHeight;
+        if (rightOverflow > 0 || bottomOverflow > 0) {
+            placeNoNextToYes();
         }
-
-        function moveButton() {
-            // A. Make Yes Button Bigger
-            yesSize += 0.2;
-            yesBtn.style.transform = `scale(${yesSize})`;
-
-            // B. Calculate Random Position
-            // Get the browser window size
-            const winWidth = window.innerWidth;
-            const winHeight = window.innerHeight;
-            
-            // Get button size
-            const btnWidth = noBtn.offsetWidth;
-            const btnHeight = noBtn.offsetHeight;
-
-            // Calculate safe boundaries (stay inside screen)
-            // We subtract button size and a 20px padding
-            const maxLeft = winWidth - btnWidth - 20;
-            const maxTop = winHeight - btnHeight - 20;
-
-            // Generate random numbers
-            const randomX = Math.floor(Math.random() * maxLeft);
-            const randomY = Math.floor(Math.random() * maxTop);
-
-            // Apply new position
-            // We use 'fixed' so it positions relative to the SCREEN, not the container
-            noBtn.style.position = "fixed"; 
-            noBtn.style.left = randomX + "px";
-            noBtn.style.top = randomY + "px";
-        }
-
-        // --- 3. SUCCESS MESSAGE ---
-        function sheSaidYes() {
-            alert("YAY! I love you Jhace! 💖 See you on the 14th!");
-        }
-    </script>
+    });
+</script>
 </body>
 </html>

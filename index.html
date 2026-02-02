@@ -103,7 +103,7 @@
         }
     }
 
-    // --- PART 2: THE BUTTON LOGIC ---
+     // --- PART 2: THE BUTTON LOGIC ---
     let yesSize = 1;
 
     function moveButton() {
@@ -118,10 +118,11 @@
         const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
         const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 
-        // Calculate max position considering button size
+        // Get button size
         const btnWidth = noBtn.offsetWidth;
         const btnHeight = noBtn.offsetHeight;
 
+        // Calculate maximum position considering button size
         const maxX = vw - btnWidth;
         const maxY = vh - btnHeight;
 
@@ -135,10 +136,12 @@
         noBtn.style.top = randomY + "px";
     }
 
+    // Optional: Add touch support for moveButton
+    document.getElementById('no-btn').addEventListener('mouseover', moveButton);
+    document.getElementById('no-btn').addEventListener('touchstart', moveButton);
+
     function sheSaidYes() {
         alert("YAY! See you on the 14th! 💖");
-        // Optional: redirect to another page or play a song
-        // window.location.href = "https://www.youtube.com/watch?v=YOUR_SONG";
     }
 </script>
 </body>

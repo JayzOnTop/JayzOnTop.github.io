@@ -73,6 +73,7 @@
 </style>
 </head>
 <body>
+    <audio id="bg-music" preload="auto"></audio>
 
 <div id="login-screen" class="container">
     <h1>Who are you?</h1>
@@ -166,10 +167,11 @@
     // 3. Add { passive: false } to allow preventDefault() to work
     // Modern browsers require this explicit option for touch events to allow blocking
     noBtn.addEventListener('touchstart', moveButton, { passive: false });
-const playlist = ["music1.mp3", "music2.mp3"]; // your MP3 files
+
+    const playlist = ["music1.mp3","music2.mp3"];
 let currentTrack = 0;
 const player = document.getElementById("bg-music");
-player.volume = 0; // start muted for autoplay to work
+player.volume = 0; // ✅ now works
 
 // Play next track in loop
 function playNextTrack() {
@@ -209,7 +211,5 @@ window.addEventListener("load", () => {
 player.addEventListener("ended", playNextTrack);
 
 </script>
-    <audio id="bg-music" preload="auto"></audio>
-    
 </body>
 </html>

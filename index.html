@@ -103,6 +103,22 @@
         }
     }
 
+    function sheSaidYes() {
+    // Hide the buttons
+    document.querySelector('.buttons').style.display = "none";
+
+    // Change the proposal message
+    const proposalBox = document.getElementById('proposal-screen');
+    proposalBox.innerHTML = `
+        <h1>YAYYY!!! 💖🥰</h1>
+        <p>You just made me the happiest person alive!</p>
+        <p>I can't wait for our Valentine’s date 💕</p>
+    `;
+
+    // Optional: Confetti effect 🎉
+    document.body.style.background = "linear-gradient(135deg, #ff9a9e, #fad0c4)";
+}
+
     let yesSize = 1;
     let isMoving = false;
 

@@ -166,12 +166,50 @@
     // 3. Add { passive: false } to allow preventDefault() to work
     // Modern browsers require this explicit option for touch events to allow blocking
     noBtn.addEventListener('touchstart', moveButton, { passive: false });
+const playlist = ["music1.mp3", "music2.mp3"]; // your MP3 files
+let currentTrack = 0;
+const player = document.getElementById("bg-music");
+player.volume = 0; // start muted for autoplay to work
+
+// Play next track in loop
+function playNextTrack() {
+    currentTrack = (currentTrack + 1) % playlist.length;
+    player.src = playlist[currentTrack];
+    player.play();
+    fadeIn(player, 0.05); // fade in each song
+}
+
+// Smooth volume fade-in
+function fadeIn(audio, step = 0.05) {
+    audio.volume = 0;
+    const fadeInterval = setInterval(() => {
+        if (audio.volume < 1) {
+            audio.volume = Math.min(audio.volume + step, 1);
+        } else {
+            clearInterval(fadeInterval);
+        }
+    }, 200); // increase volume every 200ms
+}
+
+// Start music immediately after page loads
+window.addEventListener("load", () => {
+    player.src = playlist[currentTrack];
+    player.play().catch(() => {
+        console.log("Autoplay blocked — trying silent start...");
+        // Some browsers block autoplay with sound
+        player.muted = true;
+        player.play().then(() => {
+            fadeIn(player, 0.05);
+            player.muted = false;
+        }).catch(err => console.log(err));
+    });
+});
+
+// Loop playlist
+player.addEventListener("ended", playNextTrack);
+
 </script>
-    <iframe width="0" height="0"
-        src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&loop=1&playlist=nw0tZFyExtY"
-        frameborder="0"
-        allow="autoplay"
-        allowfullscreen>
-    </iframe>
+    <audio id="bg-music" preload="auto"></audio>
+    
 </body>
 </html>

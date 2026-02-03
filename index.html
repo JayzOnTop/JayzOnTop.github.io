@@ -6,7 +6,7 @@
 <title>Valentine Page</title>
 <style>
     body {
-        background-image: url('jayzontop.github.io/backround.jpeg'); 
+        background-image: url('https://jayzontop.github.io/backround.jpeg'); 
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -51,14 +51,12 @@
     }
 
     #proposal-screen { display: none; }
-
     #no-btn { position: relative; }
 
     @media(max-width: 500px){
         button { width: auto; font-size: 1em; }
     }
 
-    /* Overlay for initial click */
     #overlay {
         position: fixed;
         top: 0; left: 0;
@@ -76,7 +74,6 @@
         transition: opacity 2s ease;
     }
 
-    /* Blur main content initially */
     body.blurred *:not(#overlay) {
         filter: blur(10px);
         transition: filter 2s ease;
@@ -85,128 +82,121 @@
 </head>
 <body class="blurred">
 
-    <!-- Overlay -->
-    <div id="overlay">Click anywhere</div>
+<div id="overlay">Click anywhere</div>
 
-    <!-- Audio element -->
-    <audio id="bg-music" preload="auto"></audio>
+<audio id="bg-music" preload="auto"></audio>
 
-    <!-- Login Screen -->
-    <div id="login-screen" class="container">
-        <h1>Who are you?</h1>
-        <p>Please enter your first name:</p>
-        <input type="text" id="name-input" placeholder="Name...">
-        <button onclick="checkName()">Enter</button>
-        <p id="error-msg" style="color:red; display:none;">Access Denied</p>
+<div id="login-screen" class="container">
+    <h1>Who are you?</h1>
+    <p>Please enter your first name:</p>
+    <input type="text" id="name-input" placeholder="Name...">
+    <button onclick="checkName()">Enter</button>
+    <p id="error-msg" style="color:red; display:none;">Access Denied</p>
+</div>
+
+<div id="proposal-screen" class="container">
+    <h1>Can I be your Valentine? 💖</h1>
+    <div class="buttons">
+        <button id="yes-btn" onclick="sheSaidYes()">Yes</button>
+        <button id="no-btn">No</button>
     </div>
-
-    <!-- Proposal Screen -->
-    <div id="proposal-screen" class="container">
-        <h1>Can I be your Valentine? 💖</h1>
-        <div class="buttons">
-            <button id="yes-btn" onclick="sheSaidYes()">Yes</button>
-            <button id="no-btn">No</button>
-        </div>
-    </div>
+</div>
 
 <script>
-    // --- LOGIN LOGIC ---
-    function checkName() {
-        const input = document.getElementById('name-input').value;
-        const errorMsg = document.getElementById('error-msg');
-        if (input.toLowerCase() === "jhace") {
-            document.getElementById('login-screen').style.display = "none";
-            document.getElementById('proposal-screen').style.display = "block";
-        } else {
-            errorMsg.style.display = "block";
-        }
+function checkName() {
+    const input = document.getElementById('name-input').value;
+    const errorMsg = document.getElementById('error-msg');
+    if (input.toLowerCase() === "jhace") {
+        document.getElementById('login-screen').style.display = "none";
+        document.getElementById('proposal-screen').style.display = "block";
+    } else {
+        errorMsg.style.display = "block";
     }
+}
 
-    // --- PROPOSAL LOGIC ---
-    function sheSaidYes() {
-        const proposalScreen = document.getElementById('proposal-screen');
-        proposalScreen.innerHTML = `
-            <h1>YAYYY!!! 💖🥰</h1>
-            <p>You just made me the happiest person alive!</p>
-            <p>See you on our Valentine’s date 💕</p>
-        `;
-        document.body.style.background = "linear-gradient(135deg, #ff9a9e, #fad0c4)";
-    }
+function sheSaidYes() {
+    const proposalScreen = document.getElementById('proposal-screen');
+    proposalScreen.innerHTML = `
+        <h1>YAYYY!!! 💖🥰</h1>
+        <p>You just made me the happiest person alive!</p>
+        <p>See you on our Valentine’s date 💕</p>
+    `;
+    document.body.style.background = "linear-gradient(135deg, #ff9a9e, #fad0c4)";
+}
 
-    // --- NO BUTTON MOVE ---
-    let yesSize = 1;
-    let isMoving = false;
+let yesSize = 1;
+let isMoving = false;
+const noBtn = document.getElementById('no-btn');
 
-    const noBtn = document.getElementById('no-btn');
-    noBtn.addEventListener('mouseover', moveButton);
-    noBtn.addEventListener('touchstart', moveButton, {passive:false});
+noBtn.addEventListener('mouseover', moveButton);
+noBtn.addEventListener('touchstart', moveButton, {passive:false});
 
-    function moveButton(e) {
-        if (isMoving) return;
-        if (e && e.type === 'touchstart') e.preventDefault();
+function moveButton(e) {
+    if (isMoving) return;
+    if (e && e.type === 'touchstart') e.preventDefault();
 
-        isMoving = true;
-        const yesBtn = document.getElementById('yes-btn');
+    isMoving = true;
+    const yesBtn = document.getElementById('yes-btn');
 
-        yesSize += 0.2;
-        yesBtn.style.transform = `scale(${yesSize})`;
+    yesSize += 0.2;
+    yesBtn.style.transform = `scale(${yesSize})`;
 
-        const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-        const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
 
-        const btnWidth = noBtn.offsetWidth;
-        const btnHeight = noBtn.offsetHeight;
+    const randomX = Math.floor(Math.random() * (vw - noBtn.offsetWidth));
+    const randomY = Math.floor(Math.random() * (vh - noBtn.offsetHeight));
 
-        const randomX = Math.floor(Math.random() * (vw - btnWidth));
-        const randomY = Math.floor(Math.random() * (vh - btnHeight));
+    noBtn.style.position = "fixed";
+    noBtn.style.left = randomX + "px";
+    noBtn.style.top = randomY + "px";
 
-        noBtn.style.position = "fixed";
-        noBtn.style.left = randomX + "px";
-        noBtn.style.top = randomY + "px";
+    setTimeout(()=>{isMoving=false;},300);
+}
 
-        setTimeout(()=>{isMoving=false;},300);
-    }
+/* 🎵 MUSIC SYSTEM */
+const playlist = [
+    "https://jayzontop.github.io/music1.mp3",
+    "https://jayzontop.github.io/music2.mp3"
+];
 
-    // --- MUSIC PLAYLIST ---
-    const playlist = ["jayzontop.github.io/music1.mp3","jayzontop.github.io/music2.mp3"];
-    let currentTrack = 0;
-    const player = document.getElementById("bg-music");
-    player.volume = 0;
+let currentTrack = 0;
+const player = document.getElementById("bg-music");
 
-    function fadeIn(audio, step=0.05) {
-        audio.volume = 0;
-        const interval = setInterval(() => {
-            if(audio.volume < 1) audio.volume = Math.min(audio.volume + step, 1);
-            else clearInterval(interval);
-        }, 200);
-    }
+function fadeIn(audio, step=0.05) {
+    audio.volume = 0;
+    const interval = setInterval(() => {
+        if(audio.volume < 1) audio.volume = Math.min(audio.volume + step, 1);
+        else clearInterval(interval);
+    }, 200);
+}
 
-    function playNextTrack() {
-        currentTrack = (currentTrack + 1) % playlist.length;
-        player.src = playlist[currentTrack];
-        player.play();
-        fadeIn(player, 0.05);
-    }
+function playNextTrack() {
+    currentTrack = (currentTrack + 1) % playlist.length;
+    player.src = playlist[currentTrack];
+    player.load();
+    player.play();
+    fadeIn(player);
+}
 
-    player.addEventListener("ended", playNextTrack);
+player.addEventListener("ended", playNextTrack);
 
-    // --- OVERLAY CLICK: REMOVE BLUR + START MUSIC ---
-    document.getElementById("overlay").addEventListener("click", ()=>{
-        const overlay = document.getElementById("overlay");
-        overlay.style.opacity = "0";
-        setTimeout(()=>overlay.style.display="none",2000);
-        document.body.classList.remove("blurred");
+/* 🔥 USER CLICK = UNBLUR + START MUSIC */
+document.getElementById("overlay").addEventListener("click", () => {
+    const overlay = document.getElementById("overlay");
+    overlay.style.opacity = "0";
+    setTimeout(()=>overlay.style.display="none",2000);
+    document.body.classList.remove("blurred");
 
-        // Start music
-        player.src = playlist[currentTrack];
-        player.play().catch(()=>{
-            player.muted = true;
-            player.play().then(()=>{
-                fadeIn(player,0.05);
-                player.muted=false;
-            });
-        });
+    player.src = playlist[currentTrack];
+    player.load();
+
+    player.play().then(()=>{
+        fadeIn(player);
+    }).catch(err=>{
+        console.log("Playback failed:", err);
     });
+});
 </script>
 </body>
 </html>

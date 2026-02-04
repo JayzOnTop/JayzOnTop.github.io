@@ -118,13 +118,14 @@ body.blurred *:not(#overlay) {
 
 <script>
 let heartInterval = null;
+let heartEmojis = ["🧎‍♂️","🛐","🙏"]; // default before YES
 
 function startHearts() {
     if (heartInterval) return;
     heartInterval = setInterval(() => {
         const heart = document.createElement("div");
         heart.className = "heart";
-        heart.textContent = ["🧎‍♂️","🛐","🙏"][Math.floor(Math.random()*3)];
+        heart.textContent = heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
         heart.style.left = Math.random() * 100 + "vw";
         heart.style.fontSize = (Math.random()*15 + 15) + "px";
         document.body.appendChild(heart);
@@ -138,7 +139,7 @@ function checkName() {
     if (input.toLowerCase() === "jhace") {
         document.getElementById('login-screen').style.display = "none";
         document.getElementById('proposal-screen').style.display = "block";
-        startHearts(); // 💖 START FLOATING HEARTS
+        startHearts();
     } else {
         errorMsg.style.display = "block";
     }
@@ -147,11 +148,14 @@ function checkName() {
 function sheSaidYes() {
     const proposalScreen = document.getElementById('proposal-screen');
     proposalScreen.innerHTML = `
-        <h1>YAYYY!!! 💖🥰</h1>
+        <h1>YAYYY!!! 🥰</h1>
         <p>You just made me the happiest person alive!</p>
         <p>See you on our Valentine’s date 💕</p>
     `;
     document.body.style.background = "linear-gradient(135deg, #ff9a9e, #fad0c4)";
+
+    // 💥 CHANGE FLOATING EMOJIS AFTER YES
+    heartEmojis = ["💖","💘","💝","💕"];
 }
 
 /* NO BUTTON MOVES */

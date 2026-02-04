@@ -2,224 +2,342 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Valentine Page</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Be My Valentine?</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body {
-    background-image: url('https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExenkyb2FmZmswZm4zZmJ2cXpsdWdwcXA4MzFndHN2cmNzNnBpOHZ1OSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/mBjozLJY4LfEOzlIpN/giphy.gif'); 
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 100vh;
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+    :root {
+        --primary-color: #ff4081;
+        --bg-overlay: rgba(255, 255, 255, 0.9);
+        --font-main: 'Poppins', sans-serif;
+        --font-fancy: 'Great Vibes', cursive;
+    }
 
-.container {
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.85);
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    position: relative;
-    z-index: 2;
-}
+    body {
+        margin: 0;
+        height: 100vh;
+        overflow: hidden;
+        font-family: var(--font-main);
+        background-color: #000;
+        /* Background image set in JS Config */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background 1s ease;
+    }
 
-h1 { color: #ff4081; font-size: 1.5em; }
+    /* Blur Effect */
+    body.blurred > *:not(#overlay) {
+        filter: blur(8px);
+        pointer-events: none;
+    }
 
-input {
-    padding: 10px;
-    font-size: 1em;
-    border-radius: 5px;
-    border: 1px solid #ff4081;
-    width: 80%;
-    margin-top: 10px;
-}
+    /* Start Overlay */
+    #overlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(5px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 1.5rem;
+        z-index: 1000;
+        cursor: pointer;
+        transition: opacity 0.8s ease;
+        text-align: center;
+        padding: 20px;
+    }
 
-button {
-    padding: 10px 20px;
-    font-size: 1em;
-    background-color: #ff4081;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 10px;
-    transition: all 0.3s ease;
-}
+    /* Main Card Container */
+    .container {
+        width: 85%;
+        max-width: 380px;
+        text-align: center;
+        background-color: var(--bg-overlay);
+        padding: 30px 20px;
+        border-radius: 25px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        position: relative;
+        z-index: 10;
+        transform: scale(1);
+        transition: transform 0.3s ease, opacity 0.5s ease;
+    }
 
-#proposal-screen { display: none; }
-#no-btn { position: relative; }
+    h1 {
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+    
+    .fancy-text {
+        font-family: var(--font-fancy);
+        font-size: 2.5rem;
+        margin: 0;
+    }
 
-#overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    backdrop-filter: blur(10px);
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-size: 2em;
-    z-index: 9999;
-    cursor: pointer;
-    transition: opacity 2s ease;
-}
+    p { color: #555; }
 
-body.blurred *:not(#overlay) {
-    filter: blur(10px);
-    transition: filter 2s ease;
-}
+    /* Inputs & Buttons */
+    input {
+        padding: 12px;
+        font-size: 1rem;
+        border-radius: 12px;
+        border: 2px solid var(--primary-color);
+        width: 70%;
+        margin-bottom: 15px;
+        outline: none;
+        text-align: center;
+    }
 
-/* 💖 Floating Hearts */
-.heart {
-    position: fixed;
-    bottom: -30px;
-    font-size: 22px;
-    animation: floatUp 6s linear forwards;
-    pointer-events: none;
-    z-index: 1;
-}
+    button {
+        padding: 12px 25px;
+        font-size: 1rem;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        margin: 5px;
+        transition: transform 0.2s, background-color 0.2s;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(255, 64, 129, 0.3);
+    }
 
-@keyframes floatUp {
-    0%   { transform: translateY(0) scale(0.8); opacity: 0; }
-    10%  { opacity: 1; }
-    100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
-}
+    button:active { transform: scale(0.95); }
+
+    .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    /* Utility Classes */
+    .hidden { display: none !important; }
+    .fade-out { opacity: 0; pointer-events: none; }
+
+    /* Floating Hearts Animation */
+    .heart {
+        position: fixed;
+        bottom: -50px;
+        font-size: 24px;
+        animation: floatUp 6s linear forwards;
+        pointer-events: none;
+        z-index: 1;
+        will-change: transform;
+    }
+
+    @keyframes floatUp {
+        0% { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 0; }
+        10% { opacity: 1; }
+        100% { transform: translateY(-120vh) scale(1.2) rotate(360deg); opacity: 0; }
+    }
 </style>
 </head>
 <body class="blurred">
 
-<div id="overlay">Click anywhere</div>
-<audio id="bg-music" preload="auto"></audio>
-
-<div id="login-screen" class="container">
-    <h1>Who are you?</h1>
-    <p>Please enter your first name:</p>
-    <input type="text" id="name-input" placeholder="Name...">
-    <button onclick="checkName()">Enter</button>
-    <p id="error-msg" style="color:red; display:none;">Access Denied</p>
-</div>
-
-<div id="proposal-screen" class="container">
-    <h1>Can I be your Valentine? 💖</h1>
-    <div class="buttons">
-        <button id="yes-btn" onclick="sheSaidYes()">Yes</button>
-        <button id="no-btn">No</button>
+    <div id="overlay">
+        <div>
+            <p style="color:white; margin:0;">Tap to Start 💕</p>
+            <small style="font-size: 0.8rem; opacity: 0.8;">(Sound On)</small>
+        </div>
     </div>
-</div>
+
+    <audio id="bg-music" preload="auto"></audio>
+
+    <div id="login-screen" class="container">
+        <h1>Who are you?</h1>
+        <p>Please enter your name to verify access:</p>
+        <input type="text" id="name-input" placeholder="Your Name..." autocomplete="off">
+        <br>
+        <button id="login-btn">Enter</button>
+        <p id="error-msg" class="hidden" style="color:#d32f2f; font-weight:bold; margin-top:10px;">Access Denied 🔒</p>
+    </div>
+
+    <div id="proposal-screen" class="container hidden">
+        <h1 class="cursive">Can I be your Valentine?</h1>
+        <div class="buttons">
+            <button id="yes-btn">Yes</button>
+            <button id="no-btn">No</button>
+        </div>
+    </div>
 
 <script>
-let heartInterval = null;
-let heartEmojis = ["🧎‍♂️","🛐","🙏"]; // default before YES
+    /**
+     * ⚙️ CONFIGURATION
+     * Customize your text, music, and images here.
+     */
+    const CONFIG = {
+        correctName: "jhace", // Case insensitive
+        bgImage: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExenkyb2FmZmswZm4zZmJ2cXpsdWdwcXA4MzFndHN2cmNzNnBpOHZ1OSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/mBjozLJY4LfEOzlIpN/giphy.gif",
+        musicPlaylist: [
+            "https://jayzontop.github.io/music1.mp3",
+            "https://jayzontop.github.io/music2.mp3"
+        ],
+        emojis: {
+            waiting: ["🧎‍♂️", "🛐", "🙏", "🥺"],
+            success: ["💖", "💘", "💝", "💕", "👩‍❤️‍💋‍👨"]
+        }
+    };
 
-function startHearts() {
-    if (heartInterval) return;
-    heartInterval = setInterval(() => {
+    // --- STATE MANAGEMENT ---
+    let currentEmojiSet = CONFIG.emojis.waiting;
+    let musicIndex = 0;
+    let yesBtnScale = 1;
+    let heartInterval;
+
+    // --- DOM ELEMENTS ---
+    const elements = {
+        body: document.body,
+        overlay: document.getElementById('overlay'),
+        loginScreen: document.getElementById('login-screen'),
+        proposalScreen: document.getElementById('proposal-screen'),
+        nameInput: document.getElementById('name-input'),
+        errorMsg: document.getElementById('error-msg'),
+        audio: document.getElementById('bg-music'),
+        yesBtn: document.getElementById('yes-btn'),
+        noBtn: document.getElementById('no-btn'),
+        loginBtn: document.getElementById('login-btn')
+    };
+
+    // --- INITIALIZATION ---
+    elements.body.style.backgroundImage = `url('${CONFIG.bgImage}')`;
+
+    // --- EVENT LISTENERS ---
+    
+    // 1. Overlay Click (Start Experience)
+    elements.overlay.addEventListener('click', () => {
+        elements.overlay.classList.add('fade-out');
+        elements.body.classList.remove('blurred');
+        playMusic();
+        setTimeout(() => elements.overlay.remove(), 800);
+    });
+
+    // 2. Login Logic
+    function attemptLogin() {
+        const inputVal = elements.nameInput.value.trim().toLowerCase();
+        if (inputVal === CONFIG.correctName.toLowerCase()) {
+            elements.loginScreen.style.display = 'none';
+            elements.proposalScreen.classList.remove('hidden');
+            startFloatingEmojis();
+        } else {
+            elements.errorMsg.classList.remove('hidden');
+            // Shake animation
+            elements.loginScreen.style.transform = "translateX(5px)";
+            setTimeout(() => elements.loginScreen.style.transform = "translateX(0)", 100);
+            setTimeout(() => elements.loginScreen.style.transform = "translateX(-5px)", 200);
+            setTimeout(() => elements.loginScreen.style.transform = "translateX(0)", 300);
+        }
+    }
+
+    elements.loginBtn.addEventListener('click', attemptLogin);
+    elements.nameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') attemptLogin();
+    });
+
+    // 3. "No" Button Evasion
+    const moveButton = (e) => {
+        // Prevent touch scrolling on mobile when trying to hit the button
+        if(e.type === 'touchstart') e.preventDefault(); 
+        
+        // Grow the Yes button
+        yesBtnScale += 0.2;
+        elements.yesBtn.style.transform = `scale(${yesBtnScale})`;
+
+        // Move the No button
+        const winWidth = window.innerWidth;
+        const winHeight = window.innerHeight;
+        const btnWidth = elements.noBtn.offsetWidth;
+        const btnHeight = elements.noBtn.offsetHeight;
+
+        // Calculate random position within viewport (minus padding)
+        const randomX = Math.random() * (winWidth - btnWidth - 20);
+        const randomY = Math.random() * (winHeight - btnHeight - 20);
+
+        elements.noBtn.style.position = 'fixed';
+        elements.noBtn.style.left = `${randomX}px`;
+        elements.noBtn.style.top = `${randomY}px`;
+    };
+
+    elements.noBtn.addEventListener('mouseover', moveButton);
+    elements.noBtn.addEventListener('touchstart', moveButton, {passive: false});
+
+    // 4. "Yes" Button Success
+    elements.yesBtn.addEventListener('click', () => {
+        elements.proposalScreen.innerHTML = `
+            <h1 class="fancy-text" style="font-size: 3rem;">YAYYY!!! 🥰</h1>
+            <p style="font-size: 1.2rem;">You just made me the happiest person alive!</p>
+            <p>See you on our Valentine’s date 💕</p>
+        `;
+        
+        // Change theme
+        elements.body.style.background = "linear-gradient(135deg, #ff9a9e, #fad0c4)";
+        currentEmojiSet = CONFIG.emojis.success;
+        
+        // Intensify hearts
+        clearInterval(heartInterval);
+        setInterval(createHeart, 150);
+    });
+
+    // --- UTILITY FUNCTIONS ---
+
+    function startFloatingEmojis() {
+        if (heartInterval) return;
+        heartInterval = setInterval(createHeart, 400);
+    }
+
+    function createHeart() {
         const heart = document.createElement("div");
         heart.className = "heart";
-        heart.textContent = heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
+        heart.textContent = currentEmojiSet[Math.floor(Math.random() * currentEmojiSet.length)];
         heart.style.left = Math.random() * 100 + "vw";
-        heart.style.fontSize = (Math.random()*15 + 15) + "px";
+        heart.style.fontSize = (Math.random() * 20 + 15) + "px";
+        heart.style.animationDuration = (Math.random() * 3 + 3) + "s"; // Random speed
         document.body.appendChild(heart);
-        setTimeout(()=>heart.remove(), 6000);
-    }, 400);
-}
-
-function checkName() {
-    const input = document.getElementById('name-input').value;
-    const errorMsg = document.getElementById('error-msg');
-    if (input.toLowerCase() === "jhace") {
-        document.getElementById('login-screen').style.display = "none";
-        document.getElementById('proposal-screen').style.display = "block";
-        startHearts();
-    } else {
-        errorMsg.style.display = "block";
+        
+        setTimeout(() => heart.remove(), 6000);
     }
-}
 
-function sheSaidYes() {
-    const proposalScreen = document.getElementById('proposal-screen');
-    proposalScreen.innerHTML = `
-        <h1>YAYYY!!! 🥰</h1>
-        <p>You just made me the happiest person alive!</p>
-        <p>See you on our Valentine’s date 💕</p>
-    `;
-    document.body.style.background = "linear-gradient(135deg, #ff9a9e, #fad0c4)";
+    function playMusic() {
+        elements.audio.src = CONFIG.musicPlaylist[musicIndex];
+        
+        const playPromise = elements.audio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                fadeInAudio(elements.audio);
+            }).catch(error => {
+                console.log("Autoplay prevented by browser.");
+            });
+        }
+        
+        elements.audio.onended = () => {
+            musicIndex = (musicIndex + 1) % CONFIG.musicPlaylist.length;
+            playMusic();
+        };
+    }
 
-    // 💥 CHANGE FLOATING EMOJIS AFTER YES
-    heartEmojis = ["💖","💘","💝","💕"];
-}
-
-/* NO BUTTON MOVES */
-let yesSize = 1;
-let isMoving = false;
-const noBtn = document.getElementById('no-btn');
-
-noBtn.addEventListener('mouseover', moveButton);
-noBtn.addEventListener('touchstart', moveButton, {passive:false});
-
-function moveButton(e) {
-    if (isMoving) return;
-    if (e && e.type === 'touchstart') e.preventDefault();
-
-    isMoving = true;
-    const yesBtn = document.getElementById('yes-btn');
-    yesSize += 0.2;
-    yesBtn.style.transform = `scale(${yesSize})`;
-
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-
-    noBtn.style.position = "fixed";
-    noBtn.style.left = Math.random() * (vw - noBtn.offsetWidth) + "px";
-    noBtn.style.top = Math.random() * (vh - noBtn.offsetHeight) + "px";
-
-    setTimeout(()=>{isMoving=false;},300);
-}
-
-/* 🎵 MUSIC SYSTEM */
-const playlist = [
-    "https://jayzontop.github.io/music1.mp3",
-    "https://jayzontop.github.io/music2.mp3"
-];
-
-let currentTrack = 0;
-const player = document.getElementById("bg-music");
-
-function fadeIn(audio, step=0.05) {
+    function fadeInAudio(audio) {
     audio.volume = 0;
-    const interval = setInterval(() => {
-        if(audio.volume < 1) audio.volume = Math.min(audio.volume + step, 1);
-        else clearInterval(interval);
+    const fadeInterval = setInterval(() => {
+        // 1. Calculate the next volume safely
+        let newVolume = audio.volume + 0.01; 
+
+        // 2. Check if it's too high
+        if (newVolume >= 1) {
+            audio.volume = 1;            // Set to max
+            clearInterval(fadeInterval); // STOP the loop completely
+        } else {
+            audio.volume = newVolume;    // Keep increasing
+        }
     }, 200);
 }
 
-function playNextTrack() {
-    currentTrack = (currentTrack + 1) % playlist.length;
-    player.src = playlist[currentTrack];
-    player.play();
-    fadeIn(player);
-}
-
-player.addEventListener("ended", playNextTrack);
-
-document.getElementById("overlay").addEventListener("click", () => {
-    const overlay = document.getElementById("overlay");
-    overlay.style.opacity = "0";
-    setTimeout(()=>overlay.style.display="none",2000);
-    document.body.classList.remove("blurred");
-
-    player.src = playlist[currentTrack];
-    player.play().then(()=>fadeIn(player)).catch(()=>{});
-});
 </script>
 </body>
 </html>
